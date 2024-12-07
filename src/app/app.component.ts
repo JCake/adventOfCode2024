@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
-import { Day1Pipe } from './day1.pipe';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SolutionsPipe } from './solutions.pipe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule, Day1Pipe],
+  imports: [FormsModule, CommonModule, SolutionsPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   public input = '';
+  public day = 1;
 }

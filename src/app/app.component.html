@@ -1,7 +1,12 @@
 <div>
-  <h4>Day 1</h4>
+  <h4>Day <select [(ngModel)]="day">
+    @for (option of [1,2]; track $index) {
+      <option>{{option}}</option>
+    }
+  </select></h4>
   <textarea [(ngModel)]="input"></textarea>
+  <div>Answers:</div>
   <div>
-    {{input | day1 | json}}
+    {{input | solutions:day | json}}
   </div>
 </div>
