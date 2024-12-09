@@ -4,6 +4,7 @@ import { Day1Pipe } from './day1.pipe';
 import { Day2Pipe } from './day2.pipe';
 import { Day3Pipe } from './day3.pipe';
 import { Day4Pipe } from './day4.pipe';
+import { Day5Pipe } from './day5.pipe';
 
 @Pipe({
   name: 'solutions',
@@ -15,6 +16,7 @@ export class SolutionsPipe implements PipeTransform {
   private Day2Pipe = Day2Pipe;
   private Day3Pipe = Day3Pipe;
   private Day4Pipe = Day4Pipe;
+  private Day5Pipe = Day5Pipe;
 
   transform(input: string, day: number): Solution {
     const pipe = eval(`new Day${day}Pipe()`);
