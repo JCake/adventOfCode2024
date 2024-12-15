@@ -11,7 +11,6 @@ export class Day4Pipe implements PipeTransform {
     let xmasCount = 0;
     let xDashMasCount = 0;
     const grid = value.toLowerCase().trim().split('\n').map(row => row.trim()).map(row => row.split(''));
-    console.log(grid);
     for(let y = 0; y < grid.length; y++){
       for(let x = 0; x < grid[y].length; x++){
         if(grid[y][x] === 'x'){
