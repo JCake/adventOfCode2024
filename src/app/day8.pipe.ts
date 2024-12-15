@@ -38,7 +38,7 @@ export class Day8Pipe implements PipeTransform {
             while(this.withinGrid(potentialAntiNode1.r + diffFrom1To2R, potentialAntiNode1.c + diffFrom1To2C, grid)){
               part2AntiNodes.add(`${potentialAntiNode1.r + diffFrom1To2R},${potentialAntiNode1.c + diffFrom1To2C}`);
               potentialAntiNode1.r = potentialAntiNode1.r + diffFrom1To2R;
-              potentialAntiNode1.c = potentialAntiNode1.c + diffFrom1To2R;
+              potentialAntiNode1.c = potentialAntiNode1.c + diffFrom1To2C;
             }
           }
           const potentialAntiNode2 = {r: spot2.r - diffFrom1To2R, c: spot2.c - diffFrom1To2C};
@@ -49,7 +49,7 @@ export class Day8Pipe implements PipeTransform {
           while(this.withinGrid(potentialAntiNode2.r - diffFrom1To2R, potentialAntiNode2.c - diffFrom1To2C, grid)){
             part2AntiNodes.add(`${potentialAntiNode2.r - diffFrom1To2R},${potentialAntiNode2.c - diffFrom1To2C}`);
             potentialAntiNode2.r = potentialAntiNode2.r - diffFrom1To2R;
-            potentialAntiNode2.c = potentialAntiNode2.c - diffFrom1To2R;
+            potentialAntiNode2.c = potentialAntiNode2.c - diffFrom1To2C;
           }
         }
       }
