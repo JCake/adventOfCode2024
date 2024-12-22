@@ -45,7 +45,7 @@ describe('Day9Pipe', () => {
     })
   });
 
-  xdescribe('part 2 - full file moving checksum', () => {
+  describe('part 2 - full file moving checksum', () => {
     it('should calculate checksum for sample input', () => {
       expect(pipe.transform('2333133121414131402').part2).toEqual('2858');
     });
