@@ -46,5 +46,15 @@ MIIIIIJJEE
 MIIISIJEEE
 MMMISSJEEE`).part1).toEqual('1930');
     })
-  })
+  });
+
+  describe('part 2', () => {
+    
+    it('should calculate with discount for each region unique', () => {
+      expect(pipe.transform(`AAAA
+BBCD
+BBCC
+EEEC`).part2).toEqual('80');
+    })
+  });
 });
