@@ -55,6 +55,31 @@ MMMISSJEEE`).part1).toEqual('1930');
 BBCD
 BBCC
 EEEC`).part2).toEqual('80');
+    });
+
+    it('should calculate with discount with repeated regions', () => {
+      expect(pipe.transform(`OOOOO
+OXOXO
+OOOOO
+OXOXO
+OOOOO`).part2).toEqual('436');
+    });
+
+    it('should calculate for another scenario', () => {
+      expect(pipe.transform(`EEEEE
+EXXXX
+EEEEE
+EXXXX
+EEEEE`).part2).toEqual('236')
     })
   });
+
+  it('should work for As and Bs example', () => {
+    expect(pipe.transform(`AAAAAA
+AAABBA
+AAABBA
+ABBAAA
+ABBAAA
+AAAAAA`).part2).toEqual('368');
+  })
 });

@@ -50,6 +50,60 @@ export class Day12Pipe implements PipeTransform {
 
 
   private checkSpot(counted: Set<string>, ri: number, ci: number, areas: Map<string, number>, plotType: string, p: Perimeters, grid: string[][]) {
+    const rs = p.part2RPerimeters.get(plotType) || new Set();
+    const cs = p.part2CPerimeters.get(plotType) || new Set();
+    if(grid[ri][ci] !== plotType){
+      rs.delete(ri);
+      rs.delete(ri + 1);
+      cs.delete(ci);
+      cs.delete(ci + 1);
+    } 
+    else {
+      if(ri > 0){
+        if(grid[ri - 1][ci] === plotType){
+          rs.delete(ri);
+        }
+        // if(ci > 0 && grid[ri-1][ci - 1] === plotType){
+        //   rs.delete(ri);
+        // }
+        // if(ci < grid[ri-1].length - 1 && grid[ri-1][ci + 1] === plotType){
+        //   rs.delete(ri);
+        // }
+      }
+      if(ri < grid.length - 1){
+        if(grid[ri+1][ci] === plotType){
+          rs.delete(ri+1);
+        }
+        // if(ci > 0 && grid[ri + 1][ci - 1] === plotType){
+        //   rs.delete(ri+1);
+        // }
+        // if(ci < grid[ri + 1].length - 1 && grid[ri + 1][ci + 1] === plotType){
+        //   rs.delete(ri+1);
+        // }
+      }
+      if(ci > 0){
+        if(grid[ri][ci - 1] === plotType){
+          cs.delete(ci);
+        }
+        // if(ri > 0 && grid[ri - 1][ci - 1] === plotType && grid[ri][ci] === plotType){
+        //   rs.delete(ci);
+        // }
+        // if(ri < grid.length - 1 && grid[ri + 1][ci - 1] === plotType && grid[ri][ci] === plotType){
+        //   rs.delete(ci);
+        // }
+      }
+      if(ci < grid[ri].length - 1 ){
+        // if(grid[ri][ci+1] === plotType){
+        //   cs.delete(ci+1);
+        // }
+        if(ri > 0 && grid[ri - 1][ci + 1] === plotType){
+          rs.delete(ci+1);
+        }
+        // if(ri < grid.length - 1 && grid[ri + 1][ci + 1] === plotType){
+        //   rs.delete(ci+1);
+        // }
+      }
+    }
     if(grid[ri][ci] !== plotType || counted.has(`${ri},${ci}`)){
       return;
     }
@@ -61,46 +115,54 @@ export class Day12Pipe implements PipeTransform {
     areas.set(plotType, areas.get(plotType) as number + 1);
     if (ri === 0 || grid[ri - 1][ci] !== plotType) {
       p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
-      const rs = p.part2RPerimeters.get(plotType) || new Set();
-      if(!rs.has(ri - 1)){
-        p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
-        rs.add(ri - 1);
-        p.part2RPerimeters.set(plotType, rs);
-      }
-    } else {
-      this.checkSpot(counted, ri - 1, ci, areas, plotType, p, grid);
-    }
-    if (ci === 0 || grid[ri][ci - 1] !== plotType) {
-      p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
-      const cs = p.part2CPerimeters.get(plotType) || new Set();
-      if(!cs.has(ci - 1)){
-        p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
-        cs.add(ci - 1);
-        p.part2CPerimeters.set(plotType, cs);
-      }
-    } else {
-      this.checkSpot(counted, ri, ci - 1, areas, plotType, p, grid);
-    }
-    if (ri === grid.length - 1 || grid[ri + 1][ci] !== plotType) {
-      p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
-      const rs = p.part2RPerimeters.get(plotType) || new Set();
       if(!rs.has(ri)){
         p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
         rs.add(ri);
         p.part2RPerimeters.set(plotType, rs);
       }
     } else {
-      this.checkSpot(counted, ri + 1, ci, areas, plotType, p, grid);
+      if(grid[ri - 1][ci] === plotType){
+        rs.delete(ri);
+      }
+      this.checkSpot(counted, ri - 1, ci, areas, plotType, p, grid);
     }
-    if (ci === grid[ri].length - 1 || grid[ri][ci + 1] !== plotType) {
+    if (ci === 0 || grid[ri][ci - 1] !== plotType) {
       p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
-      const cs = p.part2CPerimeters.get(plotType) || new Set();
       if(!cs.has(ci)){
         p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
         cs.add(ci);
         p.part2CPerimeters.set(plotType, cs);
       }
     } else {
+      if(grid[ri][ci - 1] === plotType){
+        cs.delete(ci);
+      }
+      this.checkSpot(counted, ri, ci - 1, areas, plotType, p, grid);
+    }
+    if (ri === grid.length - 1 || grid[ri + 1][ci] !== plotType) {
+      p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
+      if(!rs.has(ri + 1)){
+        p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
+        rs.add(ri + 1);
+        p.part2RPerimeters.set(plotType, rs);
+      }
+    } else {
+      if(grid[ri + 1][ci] === plotType){
+        rs.delete(ri + 1);
+      }
+      this.checkSpot(counted, ri + 1, ci, areas, plotType, p, grid);
+    }
+    if (ci === grid[ri].length - 1 || grid[ri][ci + 1] !== plotType) {
+      p.perimeters.set(plotType, p.perimeters.get(plotType) as number + 1);
+      if(!cs.has(ci + 1)){
+        p.part2Perimeters.set(plotType, Number(p.part2Perimeters.get(plotType)) + 1)
+        cs.add(ci + 1);
+        p.part2CPerimeters.set(plotType, cs);
+      }
+    } else {
+      if(grid[ri][ci + 1] === plotType) {
+        cs.delete(ci + 1);
+      }
       this.checkSpot(counted, ri, ci + 1, areas, plotType, p, grid);
     }
   }
