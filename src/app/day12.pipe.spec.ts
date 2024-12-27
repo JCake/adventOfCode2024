@@ -81,5 +81,18 @@ AAABBA
 ABBAAA
 ABBAAA
 AAAAAA`).part2).toEqual('368');
+  });
+
+  it('should work for larger example', () => {
+    expect(pipe.transform(`RRRRIICCFF
+RRRRIICCCF
+VVRRRCCFFF
+VVRCCCJFFF
+VVVVCJJCFE
+VVIVCCJJEE
+VVIIICJJEE
+MIIIIIJJEE
+MIIISIJEEE
+MMMISSJEEE`).part2).toEqual('1206');
   })
 });
