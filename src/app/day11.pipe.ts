@@ -9,28 +9,46 @@ export class Day11Pipe implements PipeTransform {
 
   transform(input: string): Solution {
     let listOfStones: number[] = input.split(' ').map((s) => Number(s));
-    for(let i = 0; i < 25; i++){
-      listOfStones = this.buildNewList(listOfStones);     
+    let startToAfter: Map<number, number[]> = new Map();
+    listOfStones = this.buildNewList(listOfStones);
+    for(let i = 0; i < 3; i++){
+      let newList: number[] = [];
+      listOfStones.forEach((stone) => {
+        let after = startToAfter.get(stone);
+        if(after){
+          newList = newList.concat(after);
+        } else {
+          const additionalItems = this.expand(stone, 8);
+          startToAfter.set(stone, additionalItems);
+          newList = newList.concat(additionalItems);
+        }
+      })
+      listOfStones = newList;     
     }
     const after25 = listOfStones.length;
 
-    let listsOfStones: number[][] = listOfStones.map((stone) => [stone]);
     let after75 = 0;
-    // TODO get this performant enough:
-    // for(let li = 0; li < listsOfStones.length; li++){
-    //   let stones = listsOfStones[li];
-    //   for(let i = 0; i < 15; i++){
-    //     stones = this.buildNewList(stones);
-    //   }
-    //   let subListsOfStones: number[][] = stones.map((stone) => [stone]);
-    //   for(let sli = 0; sli < subListsOfStones.length; sli++){
-    //     let substones = subListsOfStones[sli];
-    //     for(let i = 0; i < 1; i++){
-    //       substones = this.buildNewList(substones);
-    //     }
-    //     after75 += substones.length;
-    //   }
-    // }
+    listOfStones.forEach((outerStone) => {
+      listOfStones = [outerStone];
+      // Need 50 more iterations -> 6 x 8 = 48
+      for(let i = 0; i < 2; i++){ // TODO 2 needs to be 6
+        let newList: number[] = [];
+        listOfStones.forEach((stone) => {
+          let after = startToAfter.get(stone);
+          if(after){
+            newList = newList.concat(after);
+          } else {
+            const additionalItems = this.expand(stone, 8);
+            startToAfter.set(stone, additionalItems);
+            newList = newList.concat(additionalItems);
+          }
+        })
+        listOfStones = newList;  
+      }
+      listOfStones.forEach((stone) => {
+        after75 += this.expand(stone, 2).length;
+      })
+    });
 
     return {part1: `${after25}`, part2: `${after75}`};
   }
@@ -39,15 +57,41 @@ export class Day11Pipe implements PipeTransform {
     return listsOfStones.map(l => l.length).reduce((prev,curr) => prev + curr, 0);
   }
 
+  private expand(stone: number, steps: number): number[] {
+    let expanded = [stone];
+    for(let i = 0; i < steps; i++){
+      expanded = this.buildNewList(expanded);
+    }
+    return expanded;
+  }
+
   private buildNewList(stones: number[]) {
     const newStones: number[] = [];
+    // 0; 1; 2024; 20 24; 2 0 2 4; 4048 1 4048 8096 
+    // 1 -> 4 items (one of which is 1) in 4 steps
     stones.forEach((stone) => {
       if (stone === 0) {
         newStones.push(1);
-      } else if (`${stone}`.length % 2 === 0) {
-        const stoneStr = `${stone}`;
-        newStones.push(Number(stoneStr.substring(0, stoneStr.length / 2)));
-        newStones.push(Number(stoneStr.substring(stoneStr.length / 2)));
+      } else if(stone > 9 && stone < 100) {
+        let mod = stone % 10;
+        newStones.push(mod);
+        newStones.push((stone - mod)/10)
+      } else if(stone > 999 && stone < 10000){
+        let mod = stone % 100;
+        newStones.push(mod);
+        newStones.push((stone - mod)/100);
+      } else if(stone > 99999 && stone < 1000000){
+        let mod = stone % 1000;
+        newStones.push(mod);
+        newStones.push((stone - mod)/1000);
+      } else if(stone > 9999999 && stone < 100000000){
+        let mod = stone % 10000;
+        newStones.push(mod);
+        newStones.push((stone - mod)/10000);
+      } else if(stone > 999999999 && stone < 10000000000){
+        let mod = stone % 100000;
+        newStones.push(mod);
+        newStones.push((stone - mod)/100000);
       } else {
         newStones.push(stone * 2024);
       }
