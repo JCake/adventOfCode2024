@@ -31,31 +31,29 @@ export class Day13Pipe implements PipeTransform {
       }
       sum += min;
 
-      goal.x += 100000000000; //  00
-      goal.y += 100000000000;
-      min = 0;
-      let maxA = Math.min(Math.floor(goal.x / a.x), Math.floor(goal.y / a.y));
-      let maxB = Math.min(Math.floor(goal.x / b.x), Math.floor(goal.y / b.y));
-      let minA = Math.max(
-        Math.ceil((goal.x - maxB * b.x) / a.x),
-        Math.ceil((goal.y - maxB * b.y) / a.y)
-      )
+      goal.x += 10000000000000;
+      goal.y += 10000000000000;
       // goal.x === ac * a.x + bc * b.x
       // goal.y === ac * a.y + bc * b.y
       // (goal.x + goal.y) === ac * (a.x + a.y) + bc * (b.x + b.y)
       // ((goal.x + goal.y) - bc * (b.x + b.y)) / (a.x + a.y) === ac
-      for(let ac = minA; ac<=maxA && !min; ac++){
-        const bc = (goal.x - ac * a.x) / b.x;
-        //if((goal.x - ac * a.x) % b.x === 0){
-          if(bc * b.y === (goal.y - ac * a.y)){
-            const cost = ac * 3 + bc;
-            if(!min){
-              min = cost;
-            }
-          }
-        //}
+      // goal.x === (((goal.x + goal.y) - bc * (b.x + b.y)) / (a.x + a.y)) * a.x + bc * b.x
+      const goalSum = goal.x + goal.y;
+      const bSum = b.x + b.y;
+      const aSum = a.x + a.y;
+      // goal.x === ((goalSum - bc * bSum) / aSum) * a.x + bc * b.x
+      // goal.x * aSum === (goalSum - bc * bSum) * a.x + bc * b.x * aSum
+      // goal.x * aSum === goalSum * a.x - bc * bSum * a.x + bc * b.x * aSum
+      // goal.x * aSum - goalSum * a.x === bc * (b.x * aSum - bSum * a.x)
+      // (goal.x * aSum - goalSum * a.x) / (b.x * aSum - bSum * a.x) === bc
+      const bc =  (goal.x * aSum - goalSum * a.x) / (b.x * aSum - bSum * a.x);
+      if(Math.floor(bc) === bc){
+        // goal.x === ac * a.x + bc * b.x
+        // (goal.x - bc * b.x) / a.x === ac
+        const ac = (goal.x - bc * b.x) / a.x;
+        sum2 += (ac * 3 + bc);
       }
-      sum2 += min;
+      
     })
     return {part1: `${sum}`, part2: `${sum2}`};
   }
