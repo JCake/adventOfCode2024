@@ -11,14 +11,14 @@ export class Day11Pipe implements PipeTransform {
     let listOfStones: number[] = input.split(' ').map((s) => Number(s));
     let startToAfter: Map<number, number[]> = new Map();
     listOfStones = this.buildNewList(listOfStones);
-    for(let i = 0; i < 3; i++){
+    for(let i = 0; i < 4; i++){
       let newList: number[] = [];
       listOfStones.forEach((stone) => {
         let after = startToAfter.get(stone);
         if(after){
           newList = newList.concat(after);
         } else {
-          const additionalItems = this.expand(stone, 8);
+          const additionalItems = this.expand(stone, 6);
           startToAfter.set(stone, additionalItems);
           newList = newList.concat(additionalItems);
         }
@@ -31,14 +31,14 @@ export class Day11Pipe implements PipeTransform {
     listOfStones.forEach((outerStone) => {
       listOfStones = [outerStone];
       // Need 50 more iterations -> 6 x 8 = 48
-      for(let i = 0; i < 2; i++){ // TODO 2 needs to be 6
+      for(let i = 0; i < 3; i++){ // TODO 3 needs to be 8
         let newList: number[] = [];
         listOfStones.forEach((stone) => {
           let after = startToAfter.get(stone);
           if(after){
             newList = newList.concat(after);
           } else {
-            const additionalItems = this.expand(stone, 8);
+            const additionalItems = this.expand(stone, 6);
             startToAfter.set(stone, additionalItems);
             newList = newList.concat(additionalItems);
           }
