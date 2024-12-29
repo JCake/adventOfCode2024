@@ -63,6 +63,7 @@ export class Day11Pipe implements PipeTransform {
 
     // Approx:
     let after75 = after50 * (after50 / after25);
+    // 191014410921591 -> too low
 
     return {part1: `${after25}`, part2: `${after75}`};
   }
