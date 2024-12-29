@@ -18,9 +18,12 @@ export class Day11Pipe implements PipeTransform {
       if(stone === 1){
         finalList = finalList.concat(startToStepsToOutput.get(1)?.get(25) || []);
       } else {
-        const newList = this.expand(stone, 25, startToStepsToOutput)
+        let newList = [stone];
         const steps = new Map<number, number[]>();
-        steps.set(25, newList)
+        for(let i = 1; i <= 5; i++){
+          newList = this.expand(newList, 5, startToStepsToOutput)
+          steps.set(i * 5, newList)
+        }    
         startToStepsToOutput.set(stone, steps);
         finalList = finalList.concat(newList);
       }
@@ -29,6 +32,7 @@ export class Day11Pipe implements PipeTransform {
     const after25 = listOfStones.length;
 
     let after50 = 0;
+    let after75 = 0;
     listOfStones.forEach((outerStone) => {
       listOfStones = [outerStone];
 
@@ -39,30 +43,34 @@ export class Day11Pipe implements PipeTransform {
             startToStepsToOutput.get(outerStone)?.get(25) || []);
         } else {
           const steps = new Map<number, number[]>();
-          const newList = this.expand(outerStone, 25, startToStepsToOutput)
+          const newList = this.expand([outerStone], 25, startToStepsToOutput)
           steps.set(25, newList)
           startToStepsToOutput.set(outerStone, steps);
           outerStoneList = outerStoneList.concat(newList);
         }
         after50 += outerStoneList.length;
         // TODO uncomment
-        // outerStoneList.forEach((stone) => {
-        //   if(startToStepsToOutput.get(stone)?.has(25)){
-        //     after75 += (startToStepsToOutput.get(stone)?.get(25)?.length) as number;
-        //   } else {
-        //     // const newList = this.expand(stone, 25, startToStepsToOutput)
-        //     // const steps = new Map<number, number[]>();
-        //     // steps.set(25, newList)
-        //     // startToStepsToOutput.set(stone, steps);
-        //     // after75 += newList.length;
-        //   }    
-        //})
+        outerStoneList.forEach((stone) => {
+          const stepsToResult = startToStepsToOutput.get(stone);
+          if(stepsToResult){
+            // TODO more scenarios
+            // if(stepsToResult.get(25)){
+            //   after75 += (stepsToResult.get(25)?.length) as number;
+            // }
+          } else {
+            // const newList = this.expand(stone, 25, startToStepsToOutput)
+            // const steps = new Map<number, number[]>();
+            // steps.set(25, newList)
+            // startToStepsToOutput.set(stone, steps);
+            // after75 += newList.length;
+          }    
+        })
       })
       
     });
 
     // Approx:
-    let after75 = after50 * (after50 / after25);
+    // let after75 = after50 * (after50 / after25);
     // 191014410921591 -> too low
 
     return {part1: `${after25}`, part2: `${after75}`};
@@ -84,11 +92,8 @@ export class Day11Pipe implements PipeTransform {
     return listsOfStones.map(l => l.length).reduce((prev,curr) => prev + curr, 0);
   }
 
-  private expand(stone: number, steps: number, startToStepsToOutput: Map<number, Map<number, number[]>> = new Map()): number[] {
-    let expanded = [stone];
-    if(!startToStepsToOutput.has(stone)){
-      startToStepsToOutput.set(stone, new Map());
-    }
+  private expand(stones: number[], steps: number, startToStepsToOutput: Map<number, Map<number, number[]>> = new Map()): number[] {
+    let expanded = stones.slice();
     let others: number[] = [];
     for(let i = 0; i < steps; i++){
       const first = expanded[0];
@@ -99,7 +104,12 @@ export class Day11Pipe implements PipeTransform {
       expanded = this.buildNewList(expanded);
     }
     const endResult = expanded.concat(others);
-    startToStepsToOutput.get(stone)?.set(steps, endResult);
+    if(stones.length === 1){
+      if(!startToStepsToOutput.get(stones[0])){
+        startToStepsToOutput.set(stones[0], new Map());
+      }
+      startToStepsToOutput.get(stones[0])?.set(steps, endResult);
+    }
     return endResult;
   }
 
