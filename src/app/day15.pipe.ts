@@ -19,37 +19,47 @@ export class Day15Pipe implements PipeTransform {
 
   transform(input: string): Solution {
     const gridAndMoves = input.split('\n\n');
+    const moves = gridAndMoves[1];
     const grid: string[][] = gridAndMoves[0].split('\n').map(row => row.trim().split(''));
-    let robotLoc: Coord = {x: -1, y: -1};
-    for(let r = 0; r < grid.length; r++){
-      for(let c = 0; c < grid[r].length; c++){
-        if(grid[r][c] === '@'){
+    const expandedGrid: string[][] = gridAndMoves[0].split('\n')
+    .map(row => row.trim().split('').flatMap(s => this.expand(s)));
+    
+    let gpsSum = this.moveAndCalc(grid,moves);
+    let part2GpsSum = this.moveAndCalc(expandedGrid,moves);
+    return {part1: `${gpsSum}`, part2: `${part2GpsSum}`};
+  }
+
+  private moveAndCalc(grid: string[][], movesStr: string) {
+    let robotLoc: Coord = { x: -1, y: -1 };
+    for (let r = 0; r < grid.length; r++) {
+      for (let c = 0; c < grid[r].length; c++) {
+        if (grid[r][c] === '@') {
           robotLoc.x = c;
-          robotLoc.y = r; 
+          robotLoc.y = r;
         }
       }
     }
-    const moves: string[] = gridAndMoves[1].trim().split('');
+    const moves: string[] = movesStr.trim().split('');
     moves.forEach((move) => {
-      if(move === '>'){
+      if (move === '>') {
         this.moveRight(grid, robotLoc);
-      }else if(move === '<'){
+      } else if (move === '<') {
         this.moveLeft(grid, robotLoc);
-      }else if(move === '^'){
+      } else if (move === '^') {
         this.moveUp(grid, robotLoc);
-      } else if(move === 'v'){
+      } else if (move === 'v') {
         this.moveDown(grid, robotLoc);
       }
-    })
+    });
     let gpsSum = 0;
-    for(let r = 0; r < grid.length; r++){
-      for(let c = 0; c < grid[r].length; c++){
-        if(grid[r][c] === 'O'){
-          gpsSum += (100 * r + c); 
+    for (let r = 0; r < grid.length; r++) {
+      for (let c = 0; c < grid[r].length; c++) {
+        if (grid[r][c] === 'O'  || grid[r][c] === '[') {
+          gpsSum += (100 * r + c);
         }
       }
     }
-    return {part1: `${gpsSum}`, part2: ``};
+    return gpsSum;
   }
 
   private moveRight(grid:string[][], robotLoc: Coord): void {
@@ -107,7 +117,24 @@ export class Day15Pipe implements PipeTransform {
           robotLoc.y = robotLoc.y + yAdd;
         }
       }
+    } else if(spotToMoveTo === '[' || spotToMoveTo === ']'){
+      // TODO implement
     }
   }
 
+  expand(s: string): string[] {
+    if(s === '#'){
+      return ['#','#'];
+    }
+    if(s === 'O'){
+      return ['[',']'];
+    }
+    if(s === '.'){
+      return ['.','.'];
+    }
+    if(s === '@'){
+      return ['@','.'];
+    }
+    return [];
+  }
 }
