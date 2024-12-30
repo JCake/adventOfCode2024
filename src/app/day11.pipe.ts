@@ -20,6 +20,7 @@ export class Day11Pipe implements PipeTransform {
       } else {
         let newList = [stone];
         const steps = new Map<number, number[]>();
+        // TODO map to count instead of full map, use recursion to keep adding on
         for(let i = 1; i <= 5; i++){
           newList = this.expand(newList, 5, startToStepsToOutput)
           steps.set(i * 5, newList)
