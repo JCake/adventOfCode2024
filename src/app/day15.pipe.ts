@@ -25,8 +25,20 @@ export class Day15Pipe implements PipeTransform {
     .map(row => row.trim().split('').flatMap(s => this.expand(s)));
     
     let gpsSum = this.moveAndCalc(grid,moves);
+
+    this.printGrid(expandedGrid);
     let part2GpsSum = this.moveAndCalc(expandedGrid,moves);
+    this.printGrid(expandedGrid);
+
+    // 1557366 is too low for real answer; sample works
+
     return {part1: `${gpsSum}`, part2: `${part2GpsSum}`};
+  }
+
+  private printGrid(expandedGrid: string[][]) {
+    console.log(expandedGrid.map((row) => {
+      return (row.join(''));
+    }).join('\n'));
   }
 
   private moveAndCalc(grid: string[][], movesStr: string) {
@@ -118,7 +130,86 @@ export class Day15Pipe implements PipeTransform {
         }
       }
     } else if(spotToMoveTo === '[' || spotToMoveTo === ']'){
-      // TODO implement
+      if(xAdd){
+        let firstEmptyX = -1;
+        for(let px = robotLoc.x + 2 * xAdd; 
+          px >= 0 && px < grid[robotLoc.y].length && grid[robotLoc.y][px] !== '#'&& firstEmptyX < 0; 
+          px += xAdd){
+          if(grid[robotLoc.y][px] === '.'){
+            firstEmptyX = px;
+          }
+        }
+        if(firstEmptyX > -1){
+          for(let x = firstEmptyX; x != robotLoc.x + xAdd; x -= xAdd){
+            grid[robotLoc.y][x] = grid[robotLoc.y][x - xAdd];
+          }
+          grid[robotLoc.y][robotLoc.x + xAdd] = '@';
+          grid[robotLoc.y][robotLoc.x] = '.';
+          robotLoc.x = robotLoc.x + xAdd;
+        }
+      } else if(yAdd){
+        const adjacentXs: number[][] = [];
+        if(spotToMoveTo === '['){
+          adjacentXs.push([robotLoc.x,robotLoc.x + 1]);
+        }
+        else if(spotToMoveTo === ']'){
+          adjacentXs.push([robotLoc.x - 1,robotLoc.x]);
+        }
+        let firstEmptyY = -1;
+        let blocked = false;
+        for(let py = robotLoc.y + 2 * yAdd; 
+          py >= 0 && py < grid.length && !blocked && firstEmptyY < 0; 
+          py += yAdd){
+            const xs = adjacentXs[adjacentXs.length - 1];
+            if(xs.every((x) => {
+              return grid[py][x] === '.'
+            })){
+              firstEmptyY = py;
+            } else {
+              if(xs.some((x) => {
+                return grid[py][x] === '#'
+              })){
+                blocked = true;
+              } else {
+                const nextXs = [];
+                if(grid[py][xs[0]] === ']'){
+                  nextXs.push(xs[0] - 1);
+                } 
+                for(let i = 0; i < xs.length; i++){
+                  const x = xs[i];
+                  if(grid[py][x] !== '.'){
+                    nextXs.push(x);
+                  }
+                }
+                if(grid[py][xs[xs.length - 1]] === '['){
+                  nextXs.push(xs[xs.length - 1] + 1);
+                } 
+                adjacentXs.push(nextXs);
+              }
+            }
+        }
+        if(firstEmptyY > -1){
+          let prevXs: number[] = [];
+          for(let yi = firstEmptyY; yi != robotLoc.y + yAdd; yi -= yAdd){
+            const xs: number[] = adjacentXs.pop() as number[];
+            xs?.forEach(x => {
+              grid[yi][x] = grid[yi - yAdd][x];
+            });
+            prevXs.forEach(x => {
+              if(!xs.includes(x)){
+                grid[yi][x] = '.';
+              }
+            })
+            prevXs = xs;
+          }
+          prevXs.forEach((x) => {
+            grid[robotLoc.y + yAdd][x] = '.';
+          })
+          grid[robotLoc.y + yAdd][robotLoc.x] = '@';
+          grid[robotLoc.y][robotLoc.x] = '.';
+          robotLoc.y = robotLoc.y + yAdd;
+        }
+      }
     }
   }
 
