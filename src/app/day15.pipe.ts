@@ -31,6 +31,7 @@ export class Day15Pipe implements PipeTransform {
     this.printGrid(expandedGrid);
 
     // 1557366 is too low for real answer; sample works
+    // 1561175 --> next try
 
     return {part1: `${gpsSum}`, part2: `${part2GpsSum}`};
   }
@@ -172,18 +173,18 @@ export class Day15Pipe implements PipeTransform {
                 blocked = true;
               } else {
                 const nextXs = [];
-                if(grid[py][xs[0]] === ']'){
-                  nextXs.push(xs[0] - 1);
-                } 
                 for(let i = 0; i < xs.length; i++){
                   const x = xs[i];
+                  if(grid[py][x] === ']' && !xs.includes(x-1)){
+                    nextXs.push(x-1);
+                  }
                   if(grid[py][x] !== '.'){
                     nextXs.push(x);
                   }
+                  if(grid[py][x] === '[' && !xs.includes(x+1)){
+                    nextXs.push(x+1);
+                  }
                 }
-                if(grid[py][xs[xs.length - 1]] === '['){
-                  nextXs.push(xs[xs.length - 1] + 1);
-                } 
                 adjacentXs.push(nextXs);
               }
             }
